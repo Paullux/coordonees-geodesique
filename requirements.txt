@@ -1,0 +1,3 @@
+folium==0.12.1
+geopy==2.2.0
+tkintermapview==0.5.5
