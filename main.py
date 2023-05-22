@@ -65,6 +65,14 @@ class MapApp:
     def hide_show_widget(self):
         self.label_latitude.grid(column=0, row=1)
         self.label_longitude.grid(column=0, row=1)
+        self.entry_latitude_deg.delete(first=0,last=100)
+        self.entry_longitude_deg.delete(first=0,last=100)
+        self.entry_description.delete(first=0,last=100)
+        if self.entry_latitude_minuts and self.entry_longitude_minuts:
+            self.entry_latitude_minuts.delete(first=0,last=100)
+            self.entry_latitude_seconds.delete(first=0,last=100)
+            self.entry_longitude_minuts.delete(first=0,last=100)
+            self.entry_longitude_seconds.delete(first=0,last=100)
         if self.hidden :
             self.entry_latitude_deg.grid(column=1, row=1, columnspan=6, sticky='ew')
             self.label_latitude_deg.grid(column=7, row=1)
@@ -144,8 +152,12 @@ class MapApp:
         if latitude_text and longitude_text:
             self.map_widget.set_marker(latitude, longitude, text=address)
             self.points_listbox.insert(END, f"{description}")
-            self.points_listbox.insert(END, f"Lat : {latitude}")
-            self.points_listbox.insert(END, f"Long : {longitude}")
+            if latitude_text_minuts and longitude_text_seconds:
+                self.points_listbox.insert(END, f"Lat : {latitude_text}°{latitude_text_minuts}'{latitude_text_seconds}''")
+                self.points_listbox.insert(END, f"Long : {longitude_text}°{longitude_text_minuts}'{longitude_text_seconds}''")
+            else:
+                self.points_listbox.insert(END, f"Lat : {latitude}")
+                self.points_listbox.insert(END, f"Long : {longitude}")
             self.points_listbox.insert(END, f"")
             self.map_widget.set_position(latitude, longitude)
             self.map_widget.set_zoom(22)
