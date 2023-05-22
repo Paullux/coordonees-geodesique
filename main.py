@@ -25,32 +25,74 @@ class MapApp:
 
         ttk.Label(self.frm, text="Donnez vos coordonnées").grid(column=0, row=0, columnspan=10)
 
-        ttk.Label(self.frm, text="Latitude").grid(column=0, row=1)
-        self.entry_latitude = ttk.Entry(self.frm)
-        self.entry_latitude.grid(column=1, row=1, columnspan=8)
+        self.label_latitude = ttk.Label(self.frm, text="Latitude")
+        self.entry_latitude_deg = ttk.Entry(self.frm)
+        self.label_latitude_deg = ttk.Label(self.frm, text="°")
+        self.entry_latitude_minuts = ttk.Entry(self.frm)
+        self.label_latitude_minuts = ttk.Label(self.frm, text="'")
+        self.entry_latitude_seconds = ttk.Entry(self.frm)
+        self.label_latitude_seconds = ttk.Label(self.frm, text="''")
 
-        ttk.Label(self.frm, text="Longitude").grid(column=0, row=2)
-        self.entry_longitude = ttk.Entry(self.frm)
-        self.entry_longitude.grid(column=1, row=2, columnspan=8)
+        self.label_longitude = ttk.Label(self.frm, text="Longitude")
+        self.entry_longitude_deg = ttk.Entry(self.frm)
+        self.label_longitude_deg = ttk.Label(self.frm, text="°")
+        self.entry_longitude_minuts = ttk.Entry(self.frm)
+        self.label_longitude_minuts = ttk.Label(self.frm, text="'")
+        self.entry_longitude_seconds = ttk.Entry(self.frm)
+        self.label_longitude_seconds = ttk.Label(self.frm, text="''")
 
         ttk.Label(self.frm, text="Description").grid(column=0, row=3)
         self.entry_description = ttk.Entry(self.frm)
-        self.entry_description.grid(column=1, row=3, columnspan=8)
+        self.entry_description.grid(column=1, row=3, columnspan=6, sticky='ew')
         
-        ttk.Label(self.frm, text="Format: xx°yy'zz.aa'' ou Format: xx.yyyyyyyyy").grid(column=0, row=4, columnspan=10)
+        ttk.Button(self.frm, text="xx°yy'zz.aa''/xx.yyyyyyyyy", command=self.hide_show_widget).grid(column=0, row=4, columnspan=10)    
         
         self.points_listbox = Listbox(self.frm, height=25, width=50, bg="#252525", fg="white", selectbackground="#555555", selectforeground="white")
-        self.points_listbox.grid(column=0, row=5, columnspan=10, pady=10)       
+        self.points_listbox.grid(column=0, row=5, columnspan=10, pady=5)       
         
         self.satellite = True
+        self.hidden = True
+        self.hide_show_widget()
         
         ttk.Button(self.frm, text="Ajouter point", command=self.add_point).grid(column=0, row=7, columnspan=10)
-        ttk.Button(self.frm, text="Sat/Map", command=self.toogle_map).grid(column=0, row=8, columnspan=10)        
-        ttk.Button(self.frm, text="Quitter", command=self.root.destroy).grid(column=0, row=9, columnspan=10)
+        ttk.Button(self.frm, text="Sat/Map", command=self.toogle_map).grid(column=0, row=8, columnspan=10)   
+        ttk.Button(self.frm, text="Quitter", command=self.root.destroy).grid(column=0, row=10, columnspan=10)
                 
         self.load_map()
 
         self.text_description = None
+        
+    def hide_show_widget(self):
+        self.label_latitude.grid(column=0, row=1)
+        self.label_longitude.grid(column=0, row=1)
+        if self.hidden :
+            self.entry_latitude_deg.grid(column=1, row=1, columnspan=6, sticky='ew')
+            self.label_latitude_deg.grid(column=7, row=1)
+            self.entry_latitude_minuts.grid_remove()
+            self.label_latitude_minuts.grid_remove()
+            self.entry_latitude_seconds.grid_remove()
+            self.label_latitude_seconds.grid_remove()
+            self.label_longitude.grid(column=0, row=2)
+            self.entry_longitude_deg.grid(column=1, row=2, columnspan=6, sticky='ew')
+            self.label_longitude_deg.grid(column=7, row=2)
+            self.entry_longitude_minuts.grid_remove()
+            self.label_longitude_minuts.grid_remove()
+            self.entry_longitude_seconds.grid_remove()
+            self.label_longitude_seconds.grid_remove()
+        else:
+            self.entry_latitude_deg.grid(column=1, row=1, columnspan=1)
+            self.label_latitude_deg.grid(column=2, row=1)
+            self.entry_latitude_minuts.grid(column=3, row=1)
+            self.label_latitude_minuts.grid(column=4, row=1)
+            self.entry_latitude_seconds.grid(column=5, row=1)
+            self.label_latitude_seconds.grid(column=6, row=1)
+            self.entry_longitude_deg.grid(column=1, row=2, columnspan=1)
+            self.label_longitude_deg.grid(column=2, row=2)
+            self.entry_longitude_minuts.grid(column=3, row=2)
+            self.label_longitude_minuts.grid(column=4, row=2)
+            self.entry_longitude_seconds.grid(column=5, row=2)
+            self.label_longitude_seconds.grid(column=6, row=2)
+        self.hidden = not self.hidden
 
     def load_map(self):
         # Créez une instance de HtmlFrame et attachez-la à la fenêtre principale
@@ -68,15 +110,19 @@ class MapApp:
             
 
     def add_point(self):
-        latitude_text = self.entry_latitude.get()
-        longitude_text = self.entry_longitude.get()
+        latitude_text = self.entry_latitude_deg.get()
+        longitude_text = self.entry_longitude_deg.get()
+        latitude_text_minuts = self.entry_latitude_minuts.get()
+        longitude_text_minuts = self.entry_longitude_minuts.get()
+        latitude_text_seconds = self.entry_latitude_seconds.get()
+        longitude_text_seconds = self.entry_longitude_seconds.get()
         description = self.entry_description.get()
 
         if latitude_text and longitude_text:
             if '°' in latitude_text:
-                latitude_text = float(latitude_text.split('°')[0]) + float(latitude_text.split('°')[1].split("'")[0]) / 60 + float(latitude_text.split("'")[1].split("''")[0]) / 3600
+                latitude_text = float(latitude_text) + float(latitude_text_minuts) / 60 + float(latitude_text_seconds) / 3600
             if '°' in longitude_text:
-                longitude_text = float(longitude_text.split('°')[0]) + float(longitude_text.split('°')[1].split("'")[0]) / 60 + float(longitude_text.split("'")[1].split("''")[0]) / 3600
+                longitude_text = float(longitude_text) + float(longitude_text_minuts) / 60 + float(longitude_text_seconds) / 3600
             
             
             latitude = float(latitude_text)
