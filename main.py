@@ -132,7 +132,6 @@ class MapApp:
             if '°' in longitude_text:
                 longitude_text = float(longitude_text) + float(longitude_text_minuts) / 60 + float(longitude_text_seconds) / 3600
             
-            
             latitude = float(latitude_text)
             longitude = float(longitude_text)
 
@@ -152,9 +151,12 @@ class MapApp:
         if latitude_text and longitude_text:
             self.map_widget.set_marker(latitude, longitude, text=address)
             self.points_listbox.insert(END, f"{description}")
-            if latitude_text_minuts and longitude_text_seconds:
+            if self.entry_latitude_minuts and self.entry_longitude_minuts and self.entry_latitude_seconds and self.entry_longitude_seconds:
                 self.points_listbox.insert(END, f"Lat : {latitude_text}°{latitude_text_minuts}'{latitude_text_seconds}''")
                 self.points_listbox.insert(END, f"Long : {longitude_text}°{longitude_text_minuts}'{longitude_text_seconds}''")
+            elif self.entry_latitude_minuts and self.entry_longitude_minuts:
+                self.points_listbox.insert(END, f"Lat : {latitude_text}°{latitude_text_minuts}'")
+                self.points_listbox.insert(END, f"Long : {longitude_text}°{longitude_text_minuts}'")
             else:
                 self.points_listbox.insert(END, f"Lat : {latitude}")
                 self.points_listbox.insert(END, f"Long : {longitude}")
@@ -165,6 +167,15 @@ class MapApp:
             messagebox.showerror('Erreur', 'Veuillez entrer des coordonnées valides.')
         
         self.m.save('map.html')
+        
+        self.entry_latitude_deg.delete(first=0,last=100)
+        self.entry_longitude_deg.delete(first=0,last=100)
+        self.entry_description.delete(first=0,last=100)
+        if self.entry_latitude_minuts and self.entry_longitude_minuts:
+            self.entry_latitude_minuts.delete(first=0,last=100)
+            self.entry_latitude_seconds.delete(first=0,last=100)
+            self.entry_longitude_minuts.delete(first=0,last=100)
+            self.entry_longitude_seconds.delete(first=0,last=100)
         
     def set_dark_theme(self):
         self.style = ttk.Style()
