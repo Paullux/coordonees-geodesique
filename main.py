@@ -199,6 +199,15 @@ class MapApp:
                     coord[3].delete(first=0,last=100)
                     coord[5].delete(first=0,last=100)
         
+        self.entry_latitude_deg.delete(first=0,last=100)
+        self.entry_longitude_deg.delete(first=0,last=100)
+        self.entry_description.delete(first=0,last=100)
+        if self.entry_latitude_minuts and self.entry_longitude_minuts:
+            self.entry_latitude_minuts.delete(first=0,last=100)
+            self.entry_latitude_seconds.delete(first=0,last=100)
+            self.entry_longitude_minuts.delete(first=0,last=100)
+            self.entry_longitude_seconds.delete(first=0,last=100)
+        
     def set_dark_theme(self):
         self.style = ttk.Style()
         self.style.theme_use('clam')
