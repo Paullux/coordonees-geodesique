@@ -36,6 +36,8 @@ class MapApp:
                     ttk.Entry(self.frm),
                     ttk.Label(self.frm, text="'"),
                     ttk.Entry(self.frm),
+                    ttk.Label(self.frm, text="."),
+                    ttk.Entry(self.frm),
                     ttk.Label(self.frm, text="''")
                 ]
             switch = "button_switch" + str(i)    
@@ -73,7 +75,7 @@ class MapApp:
             ttk.Label(self.frm, text="Description " + str(i)).grid(column=0, row=offset + i)
             entry_description = ttk.Entry(self.frm)
             self.entry_description.append(entry_description)
-            entry_description.grid(column=1, row=offset + i, columnspan=6, sticky='ew')
+            entry_description.grid(column=1, row=offset + i, columnspan=8, sticky='ew')
             entry_description.insert(0, self.desc[i - 1])
         for orientation in lat_long:
             text_index = orientation + str(int(i))
@@ -81,8 +83,10 @@ class MapApp:
             if self.hidden[i - 1]:
                 p = [
                     {"f": ["grid"], "k": [{"column": 0, "row": offset + 1 + i}]},
-                    {"f": ["grid", "delete"], "k": [{"column": 1, "row": offset + 1 + i, "columnspan": 6, "sticky": 'ew'}, {"first": 0, "last" : 100}]},
+                    {"f": ["grid", "delete"], "k": [{"column": 1, "row": offset + 1 + i, "columnspan": 8, "sticky": 'ew'}, {"first": 0, "last" : 100}]},
                     {"f": ["grid", "grid_remove"], "k": [{"column": 7, "row": offset + 1 + i}, {}]},
+                    {"f": ["delete", "grid_remove"], "k": [{"first": 0, "last" : 100}, {}]},
+                    {"f": ["grid_remove"], "k": [{}]},
                     {"f": ["delete", "grid_remove"], "k": [{"first": 0, "last" : 100}, {}]},
                     {"f": ["grid_remove"], "k": [{}]},
                     {"f": ["delete", "grid_remove"], "k": [{"first": 0, "last" : 100}, {}]},
@@ -100,7 +104,9 @@ class MapApp:
                     {"f": ["grid", "delete"], "k": [{"column":3, "row":offset + 2 + i}, {"first": 0, "last" : 100}]},
                     {"f": ["grid"], "k": [{"column":4, "row":offset + 2 + i}]},
                     {"f": ["grid", "delete"], "k": [{"column":5, "row":offset + 2 + i}, {"first": 0, "last" : 100}]},
-                    {"f": ["grid"], "k": [{"column":6, "row":offset + 2 + i}]}
+                    {"f": ["grid"], "k": [{"column":6, "row":offset + 2 + i}]},
+                    {"f": ["grid", "delete"], "k": [{"column":7, "row":offset + 2 + i}, {"first": 0, "last" : 100}]},
+                    {"f": ["grid"], "k": [{"column":8, "row":offset + 2 + i}]}
                 ]
                 
                 for widget, param in zip(w, p):
@@ -108,7 +114,7 @@ class MapApp:
                         getattr(widget, func)(**kwargs)
             switch = "button_switch" + str(i)               
             self.dict_coord[switch].grid(column=0, row=offset + 3 + i, columnspan = 10, sticky='ew')
-            offset = offset + 5
+            offset = offset + 7
         self.hidden[i - 1] = not self.hidden[i - 1]
 
     def load_map(self):
@@ -142,19 +148,20 @@ class MapApp:
             for name in long_lat:
                 coord = self.dict_coord[name]
                 coordonnees.append(coord[1].get())
-                if coord[1] is not None and coord[3] is not None and coord[5] is not None:                    
+                if coord[1] is not None and coord[3] is not None and coord[5] is not None and coord[7] is not None:                    
                     coordonnees.append(coord[3].get())
                     coordonnees.append(coord[5].get())
+                    coordonnees.append(coord[7].get())
         
         offset = 0
         latitude = []
         longitude = []
         for i in range(0, 5):
             description = coordonnees[0 + i + offset]
-            latitude_text, latitude_text_minuts, latitude_text_seconds = float(coordonnees[1 + i + offset]), coordonnees[2 + i + offset], coordonnees[3 + i + offset]
-            longitude_text, longitude_text_minuts, longitude_text_seconds = float(coordonnees[4 + i + offset]), coordonnees[5 + i + offset], coordonnees[6 + i + offset]
-
-            offset = offset + 6
+            latitude_text, latitude_text_minuts, latitude_text_seconds = float(coordonnees[1 + i + offset]), coordonnees[2 + i + offset], coordonnees[3 + i + offset] + '.' + coordonnees[4 + i + offset]
+            longitude_text, longitude_text_minuts, longitude_text_seconds = float(coordonnees[5 + i + offset]), coordonnees[6 + i + offset], coordonnees[7 + i + offset] + '.' + coordonnees[8 + i + offset]
+                                             
+            offset = offset + 8
 
             if self.is_a_float(latitude_text) and self.is_a_float(longitude_text):
                 if self.is_a_float(latitude_text_minuts) and self.is_a_float(latitude_text_seconds) and self.is_a_float(longitude_text_minuts) and self.is_a_float(longitude_text_seconds):
@@ -191,22 +198,14 @@ class MapApp:
     def clear_value(self):    
         for i in range (1, 6):
             long_lat = ("Latitude " + str(i), "Longitude " + str(i))
-            self.entry_description[i-1].delete(first=0,last=100)
+            #self.entry_description[i-1].delete(first=0,last=100)
             for name in long_lat:
                 coord = self.dict_coord[name]
                 coord[1].delete(first=0,last=100)
-                if coord[1] is not None and coord[3] is not None and coord[5] is not None:                    
+                if coord[1] is not None and coord[3] is not None and coord[5] is not None and coord[7] is not None:                    
                     coord[3].delete(first=0,last=100)
                     coord[5].delete(first=0,last=100)
-        
-        self.entry_latitude_deg.delete(first=0,last=100)
-        self.entry_longitude_deg.delete(first=0,last=100)
-        self.entry_description.delete(first=0,last=100)
-        if self.entry_latitude_minuts and self.entry_longitude_minuts:
-            self.entry_latitude_minuts.delete(first=0,last=100)
-            self.entry_latitude_seconds.delete(first=0,last=100)
-            self.entry_longitude_minuts.delete(first=0,last=100)
-            self.entry_longitude_seconds.delete(first=0,last=100)
+                    coord[7].delete(first=0,last=100)    
         
     def set_dark_theme(self):
         self.style = ttk.Style()
